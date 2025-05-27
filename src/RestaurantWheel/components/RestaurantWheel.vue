@@ -16,6 +16,9 @@ const MAX_DURATION = 8000;
 
 const props = defineProps<{
     restaurants: { id: number; name: string; rating: number; }[];
+    width:  number;
+    height: number;
+
 }>();
 
 const selectedRestaurant = ref<string | null>(null);
@@ -29,6 +32,18 @@ const currentSection = computed(() => {
     const sectionAngle = 360 / props.restaurants.length;
     const currentIndex = Math.floor(((360 - normalizedRotation.value) % 360) / sectionAngle);
     return props.restaurants[currentIndex]?.name;
+});
+
+const wheelSize = computed(() => {
+  return Math.min(props.width, props.height - 80);
+});
+
+const textPadding = computed( () => {
+  return wheelSize.value * 0.14;
+});
+
+const textSize = computed(() => {
+  return Math.max(10, Math.min(16, wheelSize.value * 0.04));
 });
 
 let startAngle = 0;
@@ -70,6 +85,72 @@ const stopPowerGauge = () => {
     if (!spinning.value) {
         spinWheel();
     }
+};
+
+const normalizedSections = computed(() => {
+  const colors = [
+    '#3498DB', '#E74C3C', '#2ECC71', '#F39C12',
+    '#9B59B6', '#1ABC9C', '#D35400', '#34495E'
+  ];
+
+  return props.restaurants.map((section, index) => {
+    const text = typeof section === 'object' ? section.name || `Section ${index+1}` : section;
+    const color = typeof section === 'object' && colors[index % colors.length];
+
+    return {
+      ...section,
+      text,
+      color,
+      id: typeof section === 'object' && section.id ? section.id : index
+    };
+  });
+});
+
+const getSectionPath = (index: number) => {
+  const totalSections = normalizedSections.value.length;
+  const anglePerSection = 360 / totalSections;
+
+  // Start angle for this section
+  const startAngle = index * anglePerSection;
+  const endAngle = (index + 1) * anglePerSection;
+
+  // Convert to radians
+  const startRad = (startAngle - 90) * Math.PI / 180;
+  const endRad = (endAngle - 90) * Math.PI / 180;
+
+  const radius = wheelSize.value / 2 - 2; // Slightly smaller to fit in SVG
+
+  // Calculate points
+  const x1 = radius * Math.cos(startRad);
+  const y1 = radius * Math.sin(startRad);
+  const x2 = radius * Math.cos(endRad);
+  const y2 = radius * Math.sin(endRad);
+
+  // Create the arc path
+  const largeArcFlag = anglePerSection > 180 ? 1 : 0;
+
+  return `M 0 0 L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+};
+
+const getSectionTextRotation = (index: number) => {
+  const totalSections = normalizedSections.value.length;
+  const anglePerSection = 360 / totalSections;
+  //return index * anglePerSection + anglePerSection / 2;
+  return index * anglePerSection ;
+};
+
+const getContrastColor = (backgroundColor: string) => {
+  let hex = backgroundColor.replace('#', '');
+  if (hex.length === 3) {
+    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+  }
+
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > 0.5 ? '#000000' : '#FFFFFF';
 };
 
 const spinWheel = () => {
@@ -117,13 +198,38 @@ defineExpose({selectedRestaurant});
 
 <template>
     <div class="wheel-container">
-        <div
-            ref="wheelRef"
-            class="wheel"
-            :style="{ transform: `rotate(${rotation}deg)` }"
-            @mousedown="handleMouseDown"
-            @mousemove="handleMouseMove"
-        >
+
+          <svg
+              :width="wheelSize"
+              :height="wheelSize"
+              :viewBox="`0 0 ${wheelSize} ${wheelSize}`"
+              class="wheel-svg"
+              :style="{
+                transform: `rotate(${rotation}deg)`,
+                //transition: isSpinning ? spinTransition : 'none'
+              }"
+          >
+            <g :transform="`translate(${wheelSize / 2}, ${wheelSize / 2})`">
+              <!-- Wheel sections -->
+              <template v-for="(section, index) in normalizedSections" :key="`section-${index}`">
+                <path
+                    :d="getSectionPath(index)"
+                    :fill="section.color"
+                    class="wheel-section"
+                />
+                <!-- Text for each section -->
+                <text
+                    :transform="`rotate(${getSectionTextRotation(index)}) translate(15, -${wheelSize / 2 - textPadding}) rotate(95)`"
+                    text-anchor="middle"
+                    :fill="getContrastColor(section.color)"
+                    class="section-text"
+                    :style="{ fontSize: `${textSize}px` }"
+                >
+                  {{ section.name }}
+                </text>
+              </template>
+
+            </g>
             <div
                 v-for="(restaurant, index) in restaurants"
                 :key="restaurant.id"
@@ -136,7 +242,7 @@ defineExpose({selectedRestaurant});
                 <div class="restaurant-name">{{ restaurant.name }}</div>
             </div>
             <div class="wheel-center"/>
-        </div>
+        </svg>
         <div class="pointer"></div>
         <div class="power-gauge-container">
             <div
@@ -157,6 +263,12 @@ defineExpose({selectedRestaurant});
 </template>
 
 <style scoped>
+
+.wheel-svg {
+  transform-origin: center;
+  will-change: transform;
+}
+
 .wheel-container {
     position: relative;
     width: 500px;

@@ -12,29 +12,36 @@ interface Restaurant {
  *
  * Caravane Palace
  */
-const restaurants = ref<Restaurant[]>([
+const restaurantsOld = ref<Restaurant[]>([
     { id: 1, name: 'Café Pok', rating: 5, urlGoogle: '' },
     { id: 2, name: 'OKO café', rating: 4, urlGoogle: '' },
     { id: 3, name: 'Sabibi Pitas', rating: 4, urlGoogle: 'https://maps.app.goo.gl/7f1tGoSCkmHeS6Zw5' },
-    { id: 4, name: 'Le Mirlitantouille', rating: 4, urlGoogle: '' },
-    { id: 5, name: 'Satio', rating: 5, urlGoogle: '' },
-    { id: 6, name: 'Hot My Dog', rating: 4, urlGoogle: '' },
-    { id: 7, name: 'Ferveur', rating: 0, urlGoogle: '' },
-    { id: 8, name: 'NOW!', rating: 0, urlGoogle: '' },
-    { id: 9, name: '7 grammes', rating: 3, urlGoogle: 'https://maps.app.goo.gl/LXBjX7BGWyrVn58F8' },
-    { id: 10, name: 'Pepin Bistrot', rating: 4, urlGoogle: '' },
-    { id: 11, name: 'Jeddo', rating: 0, urlGoogle: '' },
-    { id: 12, name: 'Les Bavardes', rating: 0, urlGoogle: '' },
-    { id: 13, name: 'Hanami Ramen', rating: 5, urlGoogle: 'https://maps.app.goo.gl/i7SA4RoBm6Pg8SET9' },
-    { id: 14, name: 'Ramen ya', rating: 5, urlGoogle: 'https://maps.app.goo.gl/zeQMxffvnPSusYDs7' },
-    { id: 15, name: 'Banco', rating: 4, urlGoogle: 'https://maps.app.goo.gl/CB9a1Hehzy6Jk125A' },
-    { id: 16, name: 'Le Coucou Rennais', rating: 3, urlGoogle: 'https://maps.app.goo.gl/v5xkH3nf9J2i6cGg8' },
-    { id: 17, name: 'SAKURA YA', rating: 0, urlGoogle: 'https://maps.app.goo.gl/juTMevXH8Th8sfGX7' },
-    { id: 18, name: 'Mono (Pizza)', rating: 4, urlGoogle: 'https://maps.app.goo.gl/nVxZ9wwUJFfcwbJQ7' },
-    { id: 19, name: 'Le Globe', rating: 4, urlGoogle: 'https://maps.app.goo.gl/EG5QVaJ59hGEX5F29' },
-    { id: 20, name: 'Bombance', rating: 0, urlGoogle: 'https://maps.app.goo.gl/2GNaeDVKAEE8gKnR8' },
-    { id: 21, name: 'Café Albertine', rating: 3, urlGoogle: 'https://maps.app.goo.gl/WCFqz33vh1KFkW789' },
-    { id: 22, name: 'Caravane Palace', rating: 3, urlGoogle: 'https://maps.app.goo.gl/fgNb6ZtZssfTGhpa6' },
+    { id: 4, name: 'Mirli', rating: 4, urlGoogle: '' }
+]);
+
+const restaurants = ref<Restaurant[]>([
+  { id: 1, name: 'Café Pok', rating: 5, urlGoogle: '' },
+  { id: 2, name: 'OKO café', rating: 4, urlGoogle: '' },
+  { id: 3, name: 'Sabibi Pitas', rating: 4, urlGoogle: 'https://maps.app.goo.gl/7f1tGoSCkmHeS6Zw5' },
+  { id: 4, name: 'Mirlitantouille', rating: 4, urlGoogle: '' },
+  { id: 5, name: 'Satio', rating: 5, urlGoogle: '' },
+  { id: 6, name: 'Hot My Dog', rating: 4, urlGoogle: '' },
+  { id: 7, name: 'Ferveur', rating: 0, urlGoogle: '' },
+  { id: 8, name: 'NOW!', rating: 0, urlGoogle: '' },
+  { id: 9, name: '7 grammes', rating: 3, urlGoogle: 'https://maps.app.goo.gl/LXBjX7BGWyrVn58F8' },
+  { id: 10, name: 'Pepin Bistrot', rating: 4, urlGoogle: '' },
+  { id: 11, name: 'Jeddo', rating: 0, urlGoogle: '' },
+  { id: 12, name: 'Les Bavardes', rating: 0, urlGoogle: '' },
+  { id: 13, name: 'Hanami Ramen', rating: 5, urlGoogle: 'https://maps.app.goo.gl/i7SA4RoBm6Pg8SET9' },
+  { id: 14, name: 'Ramen ya', rating: 5, urlGoogle: 'https://maps.app.goo.gl/zeQMxffvnPSusYDs7' },
+  { id: 15, name: 'Banco', rating: 4, urlGoogle: 'https://maps.app.goo.gl/CB9a1Hehzy6Jk125A' },
+  { id: 16, name: 'Le Coucou Rennais', rating: 3, urlGoogle: 'https://maps.app.goo.gl/v5xkH3nf9J2i6cGg8' },
+  { id: 17, name: 'SAKURA YA', rating: 0, urlGoogle: 'https://maps.app.goo.gl/juTMevXH8Th8sfGX7' },
+  { id: 18, name: 'Mono (Pizza)', rating: 4, urlGoogle: 'https://maps.app.goo.gl/nVxZ9wwUJFfcwbJQ7' },
+  { id: 19, name: 'Le Globe', rating: 4, urlGoogle: 'https://maps.app.goo.gl/EG5QVaJ59hGEX5F29' },
+  { id: 20, name: 'Bombance', rating: 0, urlGoogle: 'https://maps.app.goo.gl/2GNaeDVKAEE8gKnR8' },
+  { id: 21, name: 'Café Albertine', rating: 3, urlGoogle: 'https://maps.app.goo.gl/WCFqz33vh1KFkW789' },
+  { id: 22, name: 'Caravane Palace', rating: 3, urlGoogle: 'https://maps.app.goo.gl/fgNb6ZtZssfTGhpa6' },
 ]);
 
 const selectedRestaurant = ref<string | null>(null);
@@ -51,7 +58,8 @@ const addRestaurant = () => {
         restaurants.value.push({
             id: newId,
             name: newRestaurantName.value.trim(),
-            rating: 0
+            rating: 0,
+            urlGoogle: ''
         });
         newRestaurantName.value = '';
     }
@@ -109,7 +117,7 @@ defineExpose({ selectedRestaurant, restaurants, removeRestaurant, addExistingRes
 <template>
     <div class="restaurant-list">
         <div>
-            <img class="logo" src="../../public/RestaurantWheel.svg" height="150" alt="icon"/>
+            <img class="logo" src="../../../public/RestaurantWheel.svg" height="150" alt="icon"/>
             <h2 style="margin-top: 0px">Restaurants de Rennes</h2>
         </div>
 
